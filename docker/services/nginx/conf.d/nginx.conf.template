@@ -4,7 +4,7 @@ server {
 
     charset utf-8;
 
-    root ${PROJECT_PATCH}/api/public;
+    root ${PROJECT_PATCH}/${PROJECT_FOLDER}/public;
     index index.php;
 
     error_log  /var/log/error-nginx.log;

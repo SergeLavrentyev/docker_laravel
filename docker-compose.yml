@@ -17,6 +17,7 @@ services:
     environment:
       - PROJECT_PATCH=${DOCKER_PROJECT_PATCH}
       - PHP_HOST=${DOCKER_PROJECT_NAME}_php
+      - PROJECT_FOLDER=${DOCKER_PROJECT_NAME}
     command: /scripts/nginx.sh
     depends_on:
       - php
@@ -27,19 +28,19 @@ services:
   php:
     build:
       context: .
-      dockerfile: ./docker/services/php/Dockerfile
+      dockerfile: ./docker/services/php/${DOCKER_PHP_VERSION}/Dockerfile
     container_name: ${DOCKER_PROJECT_NAME}_php
     image: ${DOCKER_PROJECT_NAME}_php
-    working_dir: ${DOCKER_PROJECT_PATCH}/api
+    working_dir: ${DOCKER_PROJECT_PATCH}/${DOCKER_PROJECT_NAME}
     ports:
       - 9000:9000
     volumes:
-      - ./api:${DOCKER_PROJECT_PATCH}/api
+      - ./${DOCKER_PROJECT_NAME}:${DOCKER_PROJECT_PATCH}/${DOCKER_PROJECT_NAME}
       - ./docker/services/php/conf.d/custom.ini:/usr/local/etc/php/conf.d/custom.ini
       - ./docker/scripts/php.sh:/scripts/php.sh
     command: /scripts/php.sh
     environment:
-      - PROJECT_PATCH=${DOCKER_PROJECT_PATCH}/api
+      - PROJECT_PATCH=${DOCKER_PROJECT_PATCH}/${DOCKER_PROJECT_NAME}
       - MYSQL_HOST=${DOCKER_PROJECT_NAME}_mysql
     depends_on:
       - mysql
@@ -49,7 +50,7 @@ services:
   mysql:
     build:
       context: .
-      dockerfile: ./docker/services/mysql/Dockerfile
+      dockerfile: ./docker/services/mysql/${DOCKER_MYSQL_VERSION}/Dockerfile
     container_name: ${DOCKER_PROJECT_NAME}_mysql
     image: ${DOCKER_PROJECT_NAME}_mysql
     volumes:
